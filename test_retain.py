@@ -110,7 +110,7 @@ def padMatrixWithoutTime(seqs, options):
 
 	return x, lengths
 
-def load_data_original(seqFile, labelFile, timeFile=''):
+def load_data_debug(seqFile, labelFile, timeFile=''):
 	sequences = np.array(pickle.load(open(seqFile, 'rb')))
 	labels = np.array(pickle.load(open(labelFile, 'rb')))
 	if len(timeFile) > 0:
@@ -167,80 +167,25 @@ def load_data_original(seqFile, labelFile, timeFile=''):
 
 	return train_set, valid_set, test_set
 
-
-def load_data(seqFile, labelFile, timeFile):
-	train_set_x = pickle.load(open(seqFile+'.train', 'rb'))
-	valid_set_x = pickle.load(open(seqFile+'.valid', 'rb'))
-	test_set_x = pickle.load(open(seqFile+'.test', 'rb'))
-	train_set_y = pickle.load(open(labelFile+'.train', 'rb'))
-	valid_set_y = pickle.load(open(labelFile+'.valid', 'rb'))
-	test_set_y = pickle.load(open(labelFile+'.test', 'rb'))
-	train_set_t = None
-	valid_set_t = None
+def load_data(dataFile, labelFile, timeFile):
+	test_set_x = np.array(pickle.load(open(dataFile, 'rb')))
+	test_set_y = np.array(pickle.load(open(labelFile, 'rb')))
 	test_set_t = None
-
 	if len(timeFile) > 0:
-		train_set_t = pickle.load(open(timeFile+'.train', 'rb'))
-		valid_set_t = pickle.load(open(timeFile+'.valid', 'rb'))
-		test_set_t = pickle.load(open(timeFile+'.test', 'rb'))
-
-	'''For debugging purposes
-	sequences = np.array(pickle.load(open(seqFile, 'rb')))
-	labels = np.array(pickle.load(open(labelFile, 'rb')))
-	if len(timeFile) > 0:
-		times = np.array(pickle.load(open(timeFile, 'rb')))
-
-	dataSize = len(labels)
-	np.random.seed(0)
-	ind = np.random.permutation(dataSize)
-	nTest = int(0.15 * dataSize)
-	nValid = int(0.10 * dataSize)
-
-	test_indices = ind[:nTest]
-	valid_indices = ind[nTest:nTest+nValid]
-	train_indices = ind[nTest+nValid:]
-
-	train_set_x = sequences[train_indices]
-	train_set_y = labels[train_indices]
-	test_set_x = sequences[test_indices]
-	test_set_y = labels[test_indices]
-	valid_set_x = sequences[valid_indices]
-	valid_set_y = labels[valid_indices]
-	train_set_t = None
-	test_set_t = None
-	valid_set_t = None
-
-	if len(timeFile) > 0:
-		train_set_t = times[train_indices]
-		test_set_t = times[test_indices]
-		valid_set_t = times[valid_indices]
-	'''
+		test_set_t = np.array(pickle.load(open(timeFile, 'rb')))
 
 	def len_argsort(seq):
 		return sorted(range(len(seq)), key=lambda x: len(seq[x]))
 
-	train_sorted_index = len_argsort(train_set_x)
-	train_set_x = [train_set_x[i] for i in train_sorted_index]
-	train_set_y = [train_set_y[i] for i in train_sorted_index]
-
-	valid_sorted_index = len_argsort(valid_set_x)
-	valid_set_x = [valid_set_x[i] for i in valid_sorted_index]
-	valid_set_y = [valid_set_y[i] for i in valid_sorted_index]
-
-	test_sorted_index = len_argsort(test_set_x)
-	test_set_x = [test_set_x[i] for i in test_sorted_index]
-	test_set_y = [test_set_y[i] for i in test_sorted_index]
-
+	sorted_index = len_argsort(test_set_x)
+	test_set_x = [test_set_x[i] for i in sorted_index]
+	test_set_y = [test_set_y[i] for i in sorted_index]
 	if len(timeFile) > 0:
-		train_set_t = [train_set_t[i] for i in train_sorted_index]
-		valid_set_t = [valid_set_t[i] for i in valid_sorted_index]
-		test_set_t = [test_set_t[i] for i in test_sorted_index]
-
-	train_set = (train_set_x, train_set_y, train_set_t)
-	valid_set = (valid_set_x, valid_set_y, valid_set_t)
+		test_set_t = [test_set_t[i] for i in sorted_index]
+	
 	test_set = (test_set_x, test_set_y, test_set_t)
 
-	return train_set, valid_set, test_set
+	return test_set
 
 def print2file(buf, outFile):
 	outfd = open(outFile, 'a')
@@ -281,7 +226,7 @@ def train_RETAIN(
 	get_result = theano.function(inputs=[x], outputs=[alpha, beta], name='get_result')
 
 	print 'Loading data ... ',
-	trainSet, validSet, testSet = load_data_original(seqFile, labelFile, timeFile)
+	testSet = load_data(seqFile, labelFile, timeFile)
 	print 'done'
 
 	types = pickle.load(open(typeFile, 'rb'))
