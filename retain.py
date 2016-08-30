@@ -503,7 +503,7 @@ def train_RETAIN(
 				elif solver=='adam':
 					costValue = update_model(x, y, lengths)
 			costVector.append(costValue)
-			if (iteration % 100 == 0) and verbose: 
+			if (iteration % 10 == 0) and verbose: 
 				print 'Epoch:%d, Iteration:%d/%d, Train_Cost:%f' % (epoch, iteration, n_batches, costValue)
 			iteration += 1
 
