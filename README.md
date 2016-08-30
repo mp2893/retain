@@ -1,7 +1,7 @@
 RETAIN
 =========================================
 
-Doctor AI is a automatic diagnosis machine that predicts medical codes that occur in the next visit, while also predicting the time duration until the next visit.
+RETAIN is an interpretable predictive model for healthcare applications. Given patient records, it can make predictions while explaining how each medical code (diagnosis codes, medication codes, or procedure codes) at each visit contributes to the prediction. The interpretation is possible due to the use of neural attention mechanism.
 
 ####Relevant Publications
 
@@ -9,7 +9,7 @@ RETAIN implements an algorithm introduced in the following:
 
 	RETAIN: Interpretable Predictive Model in Healthcare using Reverse Time Attention Mechanism
 	Edward Choi, Mohammad Taha Bahadori, Andy Schuetz, Walter F. Stewart, Jimeng Sun
-	arXiv preprint arXiv:1511.05942
+	arXiv preprint arXiv:1511.05942 (Accepted at NIPS 2016)
 
 ####Notice
 
