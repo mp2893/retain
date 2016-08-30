@@ -55,7 +55,7 @@ Remember that the ".train", ".valid", ".test" rule also applies to the "time fil
 
 **Additional: Using your own medical code representations**  
 RETAIN internally learns the vector representation of medical codes while training. These vectors are initialized with random values of course.  
-You can, however, also use your own medical code representations, if you have one. (They can be trained by using Skip-gram like algorithms. Refer to [Med2Vec](http://www.kdd.org/kdd2016/subtopic/view/multi-layer-representation-learning-for-medical-concepts) or [This](http://arxiv.org/abs/1602.03686) for further details.)
+You can, however, also use your own medical code representations, if you have one. (They can be trained by using Skip-gram like algorithms. Refer to [Med2Vec](http://www.kdd.org/kdd2016/subtopic/view/multi-layer-representation-learning-for-medical-concepts) or [this](http://arxiv.org/abs/1602.03686) for further details.)
 If you want to provide the medical code representations, it has to be a list of list (basically a matrix) of N rows and M columns where N is the number of unique codes in your "visit file" and M is the size of the code representations.
 Specify the path to your code representation file using `--embed\_file <path to embedding file>`.
 Additionally, even if you use your own medical code representations, you can re-train (a.k.a fine-tune) them as you train RETAIN.
