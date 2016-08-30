@@ -36,7 +36,7 @@ If a patient made two visits [1,2,3] and [4,5,6,7], it can be converted to a lis
 Multiple patients can be represented as [[[1,2,3], [4,5,6,7]], [[2,4], [8,3,1], [3]]], which means there are two patients where the first patient made two visits and the second patient made three visits.
 This list of list of list needs to be pickled using cPickle. We will refer to this file as the "visit file".
 
-2. The total number of unique medical codes is required to run Doctor AI.
+2. The total number of unique medical codes is required to run RETAIN.
 For example, if the dataset is using 14,000 diagnosis codes and 11,000 procedure codes, the total number is 25,000. 
 
 3. The label dataset (let us call this "label file") needs to be a Python cPickled list. Each element corresponds to the true label of each patient. For example, 1 can be the case patient and 0 can be the control patient. If there are two patients where only the first patient is a case, then we should have [1,0].
