@@ -4,7 +4,7 @@ RETAIN
 RETAIN is an interpretable predictive model for healthcare applications. Given patient records, it can make predictions while explaining how each medical code (diagnosis codes, medication codes, or procedure codes) at each visit contributes to the prediction. The interpretation is possible due to the use of neural attention mechanism.
 
 ![](figs/retain.png)
-Using RETAIN, you can calculate the how positively/negatively each medical codes (diagnosis, medication, procedure codes) at different visits contribute to the final score. In this case, we are predicting whether the given patient will be diagnosed with Heart Failure (HF). You can see that the codes that are highly related to HF makes positive contributions. RETAIN also learns to pay more attention to new information than old information. You can see that Cardiac Dysrythmia (CD) makes a bigger contribution as it occurs in the more recent visit.
+Using RETAIN, you can calculate how positively/negatively each medical code (diagnosis, medication, or procedure code) at different visits contributes to the final score. In this case, we are predicting whether the given patient will be diagnosed with Heart Failure (HF). You can see that the codes that are highly related to HF makes positive contributions. RETAIN also learns to pay more attention to new information than old information. You can see that Cardiac Dysrythmia (CD) makes a bigger contribution as it occurs in the more recent visit.
 
 ####Relevant Publications
 
