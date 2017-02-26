@@ -30,7 +30,7 @@ This code, however, is implemented to perform the sequence classification task. 
 
 3. Download/clone the RETAIN code  
 
-**STEP 2: Fast way to test GRAM with MIMIC-III**  
+**STEP 2: Fast way to test RETAIN with MIMIC-III**  
 This step describes how to train RETAIN, with minimum number of steps using MIMIC-III, to predict patients' mortality using their visit records.
 
 0. You will first need to request access for [MIMIC-III](https://mimic.physionet.org/gettingstarted/access/), a publicly avaiable electronic health records collected from ICU patients over 11 years. 
