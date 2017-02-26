@@ -16,6 +16,9 @@ from theano.sandbox.rng_mrg import MRG_RandomStreams as RandomStreams
 
 from sklearn.metrics import roc_auc_score
 
+_TEST_RATIO = 0.2
+_VALIDATION_RATIO = 0.1
+
 def unzip(zipped):
 	new_params = OrderedDict()
 	for key, value in zipped.iteritems():
@@ -236,7 +239,7 @@ def padMatrixWithoutTime(seqs, options):
 
 	return x, lengths
 
-def load_data_debug(seqFile, labelFile, timeFile=''):
+def load_data_simple(seqFile, labelFile, timeFile=''):
 	sequences = np.array(pickle.load(open(seqFile, 'rb')))
 	labels = np.array(pickle.load(open(labelFile, 'rb')))
 	if len(timeFile) > 0:
@@ -245,8 +248,8 @@ def load_data_debug(seqFile, labelFile, timeFile=''):
 	dataSize = len(labels)
 	np.random.seed(0)
 	ind = np.random.permutation(dataSize)
-	nTest = int(0.15 * dataSize)
-	nValid = int(0.10 * dataSize)
+	nTest = int(_TEST_RATIO * dataSize)
+	nValid = int(_VALIDATION_RATIO * dataSize)
 
 	test_indices = ind[:nTest]
 	valid_indices = ind[nTest:nTest+nValid]
@@ -390,7 +393,7 @@ def train_RETAIN(
 	labelFile='labelFile.txt',
 	numClass=1,
 	outFile='outFile.txt',
-	timeFile='timeFile.txt',
+	timeFile='',
 	modelFile='model.npz',
 	useLogTime=True,
 	embFile='embFile.txt',
@@ -408,6 +411,7 @@ def train_RETAIN(
 	dropoutRateContext=0.5,
 	logEps=1e-8,
 	solver='adadelta',
+	simpleLoad=False,
 	verbose=False
 ):
 	options = locals().copy()
@@ -470,7 +474,10 @@ def train_RETAIN(
 		get_cost = theano.function(inputs=[x, y, lengths], outputs=cost_noreg, name='get_cost')
 
 	print 'Loading data ... ',
-	trainSet, validSet, testSet = load_data(seqFile, labelFile, timeFile)
+	if simpleLoad:
+		trainSet, validSet, testSet = load_data_simple(seqFile, labelFile, timeFile)
+	else:
+		trainSet, validSet, testSet = load_data(seqFile, labelFile, timeFile)
 	n_batches = int(np.ceil(float(len(trainSet[0])) / float(batchSize)))
 	print 'done'
 
@@ -531,7 +538,7 @@ def parse_arguments(parser):
 	parser.add_argument('n_input_codes', type=int, metavar='<n_input_codes>', help='The number of unique input medical codes')
 	parser.add_argument('label_file', type=str, metavar='<label_file>', help='The path to the Pickled file containing label information of patients')
 	#parser.add_argument('n_output_codes', type=int, metavar='<n_output_codes>', help='The number of unique label medical codes')
-	parser.add_argument('out_file', metavar='out_file', help='The path to the output models. The models will be saved after every epoch')
+	parser.add_argument('out_file', metavar='<out_file>', help='The path to the output models. The models will be saved after every epoch')
 	parser.add_argument('--time_file', type=str, default='', help='The path to the Pickled file containing durations between visits of patients. If you are not using duration information, do not use this option')
 	parser.add_argument('--model_file', type=str, default='', help='The path to the Numpy-compressed file containing the model parameters. Use this option if you want to re-train an existing model')
 	parser.add_argument('--use_log_time', type=int, default=1, choices=[0,1], help='Use logarithm of time duration to dampen the impact of the outliers (0 for false, 1 for true) (default value: 1)')
@@ -550,6 +557,7 @@ def parse_arguments(parser):
 	parser.add_argument('--dropout_context', type=float, default=0.5, help='Dropout rate between the context vector c_i and the final classifier (default value: 0.5)')
 	parser.add_argument('--log_eps', type=float, default=1e-8, help='A small value to prevent log(0) (default value: 1e-8)')
 	parser.add_argument('--solver', type=str, default='adadelta', choices=['adadelta','adam'], help='Select which solver to train RETAIN: adadelta, or adam. (default: adadelta)')
+	parser.add_argument('--simple_load', action='store_true', help='Use an alternative way to load the dataset. Instead of you having to provide a trainign set, validation set, test set, this will automatically divide the dataset. (default false)')
 	parser.add_argument('--verbose', action='store_true', help='Print output after every 100 mini-batches (default false)')
 	args = parser.parse_args()
 	return args
@@ -582,5 +590,6 @@ if __name__ == '__main__':
 		dropoutRateContext=args.dropout_context, 
 		logEps=args.log_eps, 
 		solver=args.solver,
+		simpleLoad=args.simple_load,
 		verbose=args.verbose
 	)
