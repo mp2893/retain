@@ -51,7 +51,7 @@ The command is `python retain.py <3digitICD9.seqs file> 942 <morts file> <output
 
 4. The model reaches AUC above 0.8 with the above command, but the interpretations are not super clear. 
 You could tune the hyper-parameters, but I doubt things will dramatically improve. 
-After all, MIMIC-III has only 7500 patients who made more than two hospital visits, and the most visit sequences are very short (average 2 visits per patient).
+After all, only 7,500 patients made more than a single hospital visit, and most of them have only two visits.
 
 **STEP 3: How to prepare your own dataset**  
 
