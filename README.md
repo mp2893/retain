@@ -6,7 +6,7 @@ RETAIN is an interpretable predictive model for healthcare applications. Given p
 [![RETAIN Interpretation Demo](http://www.cc.gatech.edu/~echoi48/images/thumbnail.png)](https://youtu.be/co3lTOSgFlA?t=1m46s "RETAIN Interpretation Demo - Click to Watch!")
 Using RETAIN, you can calculate how positively/negatively each medical code (diagnosis, medication, or procedure code) at different visits contributes to the final score. In this case, we are predicting whether the given patient will be diagnosed with Heart Failure (HF). You can see that the codes that are highly related to HF makes positive contributions. RETAIN also learns to pay more attention to new information than old information. You can see that Cardiac Dysrythmia (CD) makes a bigger contribution as it occurs in the more recent visit.
 
-####Relevant Publications
+#### Relevant Publications
 
 RETAIN implements an algorithm introduced in the following [paper](http://papers.nips.cc/paper/6321-retain-an-interpretable-predictive-model-for-healthcare-using-reverse-time-attention-mechanism):
 
@@ -14,13 +14,13 @@ RETAIN implements an algorithm introduced in the following [paper](http://papers
 	Edward Choi, Mohammad Taha Bahadori, Joshua A. Kulas, Andy Schuetz, Walter F. Stewart, Jimeng Sun,
 	NIPS 2016, pp.3504-3512
 
-####Notice
+#### Notice
 
 The RETAIN paper formulates the model as being able to make prediction at each timestep (e.g. try to predict what diagnoses the patient will receive at each visit), and treats sequence classification (e.g. Given a patient record, will he be diagnosed with heart failure in the future?) as a special case, since sequence classification makes the prediction at the last timestep only.
 
 This code, however, is implemented to perform the sequence classification task. For example, you can use this code to predict whether the given patient is a heart failure patient or not. Or you can predict whether this patient will be readmitted in the future. The more general version of RETAIN will be released in the future.
 	
-####Running RETAIN
+#### Running RETAIN
 
 **STEP 1: Installation**  
 
