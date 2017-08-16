@@ -84,8 +84,10 @@ def init_tparams(params, options):
 	return tparams
 
 def dropout_layer(state_before, use_noise, trng, dropout_rate=0.5):
-	proj = T.switch(use_noise, (state_before * trng.binomial(state_before.shape, p=dropout_rate, n=1, dtype=state_before.dtype)), 
-state_before / dropout_rate)
+	proj = T.switch(
+                use_noise,
+                state_before * trng.binomial(state_before.shape, p=dropout_rate, n=1, dtype=state_before.dtype) / (1.0 - dropout_rate),
+                state_before)
 	return proj
 
 def _slice(_x, n, dim):
