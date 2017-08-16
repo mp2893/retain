@@ -83,10 +83,10 @@ def init_tparams(params, options):
 		tparams[key] = theano.shared(value, name=key)
 	return tparams
 
-def dropout_layer(state_before, use_noise, trng, dropout_rate=0.5):
+def dropout_layer(state_before, use_noise, trng, keep_prob=0.5):
 	proj = T.switch(
                 use_noise,
-                state_before * trng.binomial(state_before.shape, p=dropout_rate, n=1, dtype=state_before.dtype) / (1.0 - dropout_rate),
+                state_before * trng.binomial(state_before.shape, p=keep_prob, n=1, dtype=state_before.dtype) / keep_prob,
                 state_before)
 	return proj
 
@@ -114,8 +114,8 @@ def gru_layer(tparams, emb, name, hiddenDimSize):
 	return results
 	
 def build_model(tparams, options, W_emb=None):
-	doRate_emb = options['dropoutRateEmb']
-	doRate_context = options['dropoutRateContext']
+	keep_prob_emb = options['keepProbEmb']
+	keep_prob_context = options['keepProbContext']
 	alphaHiddenDimSize = options['alphaHiddenDimSize']
 	betaHiddenDimSize = options['betaHiddenDimSize']
 
@@ -134,7 +134,7 @@ def build_model(tparams, options, W_emb=None):
 	if options['embFineTune']: emb = T.dot(x, tparams['W_emb'])
 	else: emb = T.dot(x, W_emb)
 
-	if doRate_emb > 0.0: emb = dropout_layer(emb, use_noise, trng, doRate_emb)
+	if keep_prob_emb > 0.0: emb = dropout_layer(emb, use_noise, trng, keep_prob_emb)
 
 	if useTime: temb = T.concatenate([emb, t.reshape([n_timesteps,n_samples,1])], axis=2) #Adding the time element to the embedding
 	else: temb = emb
@@ -154,7 +154,7 @@ def build_model(tparams, options, W_emb=None):
 
 	counts = T.arange(n_timesteps)+ 1
 	c_t, updates = theano.scan(fn=attentionStep, sequences=[counts], outputs_info=None, name='attention_layer', n_steps=n_timesteps)
-	c_t = dropout_layer(c_t, use_noise, trng, doRate_context)
+	c_t = dropout_layer(c_t, use_noise, trng, keep_prob_context)
 
 	preY = T.nnet.sigmoid(T.dot(c_t, tparams['w_output']) + tparams['b_output'])
 	preY = preY.reshape((preY.shape[0], preY.shape[1]))
@@ -410,8 +410,8 @@ def train_RETAIN(
 	L2_emb=0.001,
 	L2_alpha=0.001,
 	L2_beta=0.001,
-	dropoutRateEmb=0.5,
-	dropoutRateContext=0.5,
+	keepProbEmb=0.5,
+	keepProbContext=0.5,
 	logEps=1e-8,
 	solver='adadelta',
 	simpleLoad=False,
@@ -556,8 +556,8 @@ def parse_arguments(parser):
 	parser.add_argument('--L2_emb', type=float, default=0.001, help='L2 regularization for the input embedding weight W_emb (default value: 0.001)')
 	parser.add_argument('--L2_alpha', type=float, default=0.001, help='L2 regularization for the alpha generating weight w_alpha (default value: 0.001).')
 	parser.add_argument('--L2_beta', type=float, default=0.001, help='L2 regularization for the input embedding weight W_beta (default value: 0.001)')
-	parser.add_argument('--dropout_emb', type=float, default=0.5, help='Dropout rate between the embedded input and the alpha & beta generation process (default value: 0.5)')
-	parser.add_argument('--dropout_context', type=float, default=0.5, help='Dropout rate between the context vector c_i and the final classifier (default value: 0.5)')
+	parser.add_argument('--keep_prob_emb', type=float, default=0.5, help='Decides how much you want to keep during the dropout between the embedded input and the alpha & beta generation process (default value: 0.5)')
+	parser.add_argument('--keep_prob_context', type=float, default=0.5, help='Decides how much you want to keep during the dropout between the context vector c_i and the final classifier (default value: 0.5)')
 	parser.add_argument('--log_eps', type=float, default=1e-8, help='A small value to prevent log(0) (default value: 1e-8)')
 	parser.add_argument('--solver', type=str, default='adadelta', choices=['adadelta','adam'], help='Select which solver to train RETAIN: adadelta, or adam. (default: adadelta)')
 	parser.add_argument('--simple_load', action='store_true', help='Use an alternative way to load the dataset. Instead of you having to provide a trainign set, validation set, test set, this will automatically divide the dataset. (default false)')
@@ -589,8 +589,8 @@ if __name__ == '__main__':
 		L2_emb=args.L2_emb, 
 		L2_alpha=args.L2_alpha, 
 		L2_beta=args.L2_beta, 
-		dropoutRateEmb=args.dropout_emb, 
-		dropoutRateContext=args.dropout_context, 
+		keepProbEmb=args.keep_prob_emb, 
+		keepProbContext=args.keep_prob_context, 
 		logEps=args.log_eps, 
 		solver=args.solver,
 		simpleLoad=args.simple_load,
