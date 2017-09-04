@@ -44,7 +44,7 @@ The ".seqs" file contains the sequence of visits for each patient. Each visit co
 However we recommend using ".3digitICD9.seqs" file instead, as the results will be much more interpretable.
 (Or you could use [Single-level Clical Classification Software for ICD9](https://www.hcup-us.ahrq.gov/toolssoftware/ccs/ccs.jsp#examples) to decrease the number of codes to a couple of hundreds, which will even more improve the performance)
 The ".morts" file contains the sequence of mortality labels for each patient. 
-The command is `python retain.py <3digitICD9.seqs file> 942 <morts file> <output path> --simple_load --n_epochs 100 --dropout_context 0.8 --dropout_emb 0.0`.
+The command is `python retain.py <3digitICD9.seqs file> 942 <morts file> <output path> --simple_load --n_epochs 100 --keep_prob_context 0.8 --keep_prob_emb 0.5`.
 `942` is the number of the entire 3-digit ICD9 codes used in the dataset.
 
 3. To test the model for interpretation, please refer to Step 6. I personally found that _perinatal jaundice (ICD9 774)_ has high correlation with mortality.
@@ -99,7 +99,7 @@ the "label file", and the output path. The output path is where the learned weig
 The respective commands are `--embed_size <integer>`, `--alpha_hidden_dim_size <integer>`, and `--beta_hidden_dim_size <integer>`.
 For example `--alpha_hidden_dim_size 128` will tell RETAIN to use a GRU with 128-dimensional hidden layer for generating alpha.
 
-4. Dropouts are applied to two places: 1) to the input embedding, 2) to the context vector c_i. The respective dropout rates can be adjusted using `--dropout_embed {0.0, 1.0}` and `--dropout_context {0.0, 1.0}`. Dropout values affect the performance so it is recommended to tune them for your data.
+4. Dropouts are applied to two places: 1) to the input embedding, 2) to the context vector c_i. The respective dropout rates can be adjusted using `--keep_prob_embed {0.0, 1.0}` and `--keep_prob_context {0.0, 1.0}`. Dropout values affect the performance so it is recommended to tune them for your data.
 
 5. L2 regularizations can be applied to W_emb, w_alpha, W_beta, and w_output.
 
