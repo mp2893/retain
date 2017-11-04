@@ -134,7 +134,7 @@ def build_model(tparams, options, W_emb=None):
 	if options['embFineTune']: emb = T.dot(x, tparams['W_emb'])
 	else: emb = T.dot(x, W_emb)
 
-	if keep_prob_emb > 0.0: emb = dropout_layer(emb, use_noise, trng, keep_prob_emb)
+	if keep_prob_emb < 1.0: emb = dropout_layer(emb, use_noise, trng, keep_prob_emb)
 
 	if useTime: temb = T.concatenate([emb, t.reshape([n_timesteps,n_samples,1])], axis=2) #Adding the time element to the embedding
 	else: temb = emb
@@ -154,7 +154,7 @@ def build_model(tparams, options, W_emb=None):
 
 	counts = T.arange(n_timesteps)+ 1
 	c_t, updates = theano.scan(fn=attentionStep, sequences=[counts], outputs_info=None, name='attention_layer', n_steps=n_timesteps)
-	c_t = dropout_layer(c_t, use_noise, trng, keep_prob_context)
+        if keep_prob_context < 1.0: c_t = dropout_layer(c_t, use_noise, trng, keep_prob_context)
 
 	preY = T.nnet.sigmoid(T.dot(c_t, tparams['w_output']) + tparams['b_output'])
 	preY = preY.reshape((preY.shape[0], preY.shape[1]))
